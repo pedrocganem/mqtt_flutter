@@ -13,10 +13,10 @@ class Broker {
 
   //Define class variables:
 
-  String broker = 'dev-mqtt.favotecnologia.com.br';
+  String broker = 'your_broker';
   int port = 1883;
-  String username = 'super1';
-  String password = 'super1';
+  String username = 'your_username';
+  String password = 'your_password';
   String clientIdentifier = 'mqtt-test';
   MqttServerClient client;
   StreamSubscription subscription;

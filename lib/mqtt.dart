@@ -13,11 +13,11 @@ class Broker {
 
   //Define class variables:
 
-  String broker = '';
+  String broker = 'dev-mqtt.favotecnologia.com.br';
   int port = 1883;
-  String username;
-  String password;
-  String clientIdentifier;
+  String username = 'super1';
+  String password = 'super1';
+  String clientIdentifier = 'mqtt-test';
   MqttServerClient client;
   StreamSubscription subscription;
 
@@ -42,7 +42,7 @@ class Broker {
 
     try {
       await client.connect();
-      // client.subscribe(topic, qosLevel)
+      client.subscribe("vice/1339/sensors", MqttQos.atLeastOnce);
     } catch (e) {
       print('Exception: $e');
       client.disconnect();

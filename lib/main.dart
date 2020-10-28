@@ -3,7 +3,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_flutter/mqtt.dart';
 
 void main() {
-  runApp(HomeScreen());
+  runApp(MaterialApp(home: HomeScreen()));
 }
 
 class HomeScreen extends StatefulWidget {
@@ -12,9 +12,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String messageFromBroker;
+  String messageFromBroker = 'Idle';
   bool isConnected;
-  String connectButtonTitle;
+  String connectButtonTitle = 'Connect';
+  String disconnectButtonTitle = 'Disconnect';
 
   void onMessage(List<MqttReceivedMessage<MqttMessage>> event) {
     final MqttPublishMessage recMess = event[0].payload as MqttPublishMessage;
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print("[MQTT client] message with message: $message");
 
     if (message != null) {
-      isConnected = true;
+      connectButtonTitle = 'connected';
     }
     setState(() {
       messageFromBroker = message;
@@ -37,24 +38,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.green,
         elevation: 0,
         title: Text('Using MQTT with flutter!'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(messageFromBroker),
-          FlatButton(
-              onPressed: () {
-                Broker().brokerSetup(onMessage);
-                setState(() {
-                  connectButtonTitle = 'connecting';
-                });
-              },
-              child: Text(connectButtonTitle))
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                width: 200,
+                child: Text(
+                  messageFromBroker,
+                  textAlign: TextAlign.center,
+                )),
+            SizedBox(
+              height: 40,
+            ),
+            FlatButton(
+                color: Colors.green,
+                onPressed: () {
+                  Broker().brokerSetup(onMessage);
+                  setState(() {
+                    connectButtonTitle = 'connecting';
+                    messageFromBroker = 'Waiting for messages...';
+                  });
+                },
+                child: Text(connectButtonTitle)),
+            FlatButton(
+                color: Colors.blue,
+                onPressed: () {
+                  Broker().client.disconnect();
+                  setState(() {
+                    disconnectButtonTitle = 'disconnected!';
+                    connectButtonTitle = 'connect';
+                    messageFromBroker = 'idle';
+                  });
+                },
+                child: Text(disconnectButtonTitle))
+          ],
+        ),
       ),
     );
   }
